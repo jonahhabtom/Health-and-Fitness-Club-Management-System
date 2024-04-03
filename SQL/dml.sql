@@ -8,15 +8,15 @@ INSERT INTO members (first_name, last_name, email, password, join_date, gender, 
 
 -- Insert trainers into trainers
 INSERT INTO trainers (first_name, last_name, email, password) VALUES
-('Jessica', 'Norman', 'jessica.norman@trainer.com', 'Jessica123'),
-('Arnold', 'Jackson', 'arnold.jackson@trainer.com', 'Arnold123'),
-('Ryan', 'Patrick', 'ryan.patrick@trainer.com', 'Ryan123');
+('Jessica', 'Norman', 'jessica.norman@fitnessclub.com', 'Jessica123'),
+('Arnold', 'Jackson', 'arnold.jackson@fitnessclub.com', 'Arnold123'),
+('Ryan', 'Patrick', 'ryan.patrick@fitnessclub.com', 'Ryan123');
 
 -- Insert admins into administrators
 INSERT INTO administrators (first_name, last_name, email, password) VALUES
-('Admin', 'Admin', 'admin@admin.com', 'admin'),
-('Rick', 'Niel', 'rick.niel@admin.com', 'Rick123'),
-('Chris', 'Conlin', 'chris.conlin@admin.com', 'Chris123');
+('Admin', 'Admin', 'admin@fitnessclub.com', 'admin'),
+('Rick', 'Niel', 'rick.niel@fitnessclub.com', 'Rick123'),
+('Chris', 'Conlin', 'chris.conlin@fitnessclub.com', 'Chris123');
 
 -- Add availabilities for the three trainers to trainer_availability
 INSERT INTO trainer_availability (trainer_id, day, start_time, end_time) VALUES
@@ -79,7 +79,7 @@ INSERT INTO rooms (name, max_members) VALUES
 INSERT INTO room_bookings (room_id, date, start_time, end_time, purpose) VALUES
 (1, '2024-05-31', '18:00', '22:00', 'Staff Party'),
 (5, '2024-06-19', '10:00', '17:00', 'Swim Meet'),
-(7, '2024-06-20', '20:00', '24:00', 'Boxing fight');
+(7, '2024-06-20', '20:00', '23:00', 'Boxing fight');
 
 -- Insert member's fitness achievements into fitness_achievements
 INSERT INTO fitness_achievements (member_id, name, achieved_date) VALUES
@@ -102,7 +102,17 @@ INSERT INTO goals (member_id, name, target_value, target_date) VALUES
 (4, 'Lose Weight', 5, '2024-05-27'),
 (5, 'Increase Bench Press', 30, '2024-06-04');
 
+INSERT INTO exercise_routines (member_id, movement, amount) VALUES
+(1, 'Pushups', 50),
+(2, 'Jumping Jacks', 20),
+(3, 'Squats', 30),
+(4, 'Situps', 15),
+(5, 'Burpees', 20);
+
 -- Insert generated bills into bills
-INSERT INTO bills (member_id, amount, payment_due_date, status, description) VALUES
-(1, 580.00, '2024-03-01', 'Not Paid', 'Yearly Membership Fee, Personal Weight Training, Personal Cardio, Yoga Class, HIIT Class'),
-(2, 540.00, '2024-03-01', 'Not Paid', 'Yearly Membership Fee, Personal Weight Training, HIIT Class');
+INSERT INTO bills (member_id, amount, billing_month, bill_created_date, payment_due_date, status, fees) VALUES
+(1, 30.00, '2024-01-01', '2024-01-25', '2024-02-25', 'Paid', 'Monthly Fee: $30'),
+(2, 30.00, '2024-03-01', '2024-03-28', '2024-04-28', 'Unpaid', 'Monthly Fee: $30'),
+(3, 30.00, '2024-02-01', '2024-02-25', '2024-03-25', 'Unpaid', 'Monthly Fee: $30'),
+(4, 30.00, '2023-12-01', '2023-12-30', '2024-01-30', 'Paid', 'Monthly Fee: $30'),
+(5, 30.00, '2024-01-01', '2024-01-22', '2024-02-22', 'Paid', 'Monthly Fee: $30');
