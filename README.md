@@ -34,3 +34,8 @@ Here is the link to the video demonstration for this application:
 - In the command line, navigate to the src folder of this repository
 - Run the command "py main.py"
 - Interact with command line application using the menu options
+
+### Testing the Application
+- For testing the member functionality, it is recommended to login with the email marcus.smith@gmail.com and password Marcus123. You can also register a new member
+- For testing the trainer functionality, you can login with the email jessica.norman@fitnessclub.com and password Jessica123
+- For testing the administrator functionality, you can login with the email admin@fitnessclub.com and password admin
