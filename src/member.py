@@ -212,7 +212,7 @@ def updatePersonalInfo(conn, memberId):
                     fields.append("email = %s")
                     values.append(email)
             
-            password = input("Enter new password (Hit Enter to kepp the same password): ")
+            password = input("Enter new password (Hit Enter to keep the same password): ")
             # If a password was entered, add the field and value to the lists
             if password:
                 fields.append("password = %s")
@@ -324,7 +324,7 @@ def removeGoal(conn, memberId):
     with conn.cursor() as cursor:
         try:
             # Get all the goals in for the member to display them for the user to choose which to remove
-            cursor.execute("SELECT goal_id, name, target_value, target_date FROM goals WHERE member_id = %s ORDER BY target_date;", (memberId,))
+            cursor.execute("SELECT goal_id, name, target_value, target_date FROM goals WHERE member_id = %s;", (memberId,))
             goals = cursor.fetchall()
             
             if not goals:
@@ -335,7 +335,7 @@ def removeGoal(conn, memberId):
             for goal in goals:
                 print(f"Goal Id: {goal[0]}, Goal: {goal[1]}, Target Value: {goal[2]}, Target Date: {goal[3]}")
 
-            goalId = input("Enter the Id of the goal to remove: ")
+            goalId = input("Enter the id of the goal to remove: ")
             
             # Remove the goal from the goals table
             cursor.execute("DELETE FROM goals WHERE goal_id = %s;", (goalId,))
@@ -381,12 +381,12 @@ def checkTrainerAvail(cursor, trainerId, startTime, endTime, sessionId = None, c
 def schedulePersonalSession(conn, memberId):
     with conn.cursor() as cursor:
         # Provides the member a list of trainers to book with
-        print("Trainers to schedule with:")
+        print("\nTrainers to schedule with:")
         cursor.execute("SELECT trainer_id, first_name, last_name FROM trainers;")
         for trainer in cursor.fetchall():
             print(f"Trainer Id: {trainer[0]}, Name: {trainer[1]} {trainer[2]}")
         
-        trainerId = input("Enter the Id of the trainer you want to schedule with: ")
+        trainerId = input("Enter the id of the trainer you want to schedule with: ")
         name = input("Enter a name for the session: ")
         date = input("Enter the date for the session (Use the form yyyy-mm-dd): ")
         startTimeInp = input("Enter the session start time (Use the form hh:mm): ")
@@ -414,7 +414,7 @@ def schedulePersonalSession(conn, memberId):
 def reschedulePersonalSession(conn, memberId):
     with conn.cursor() as cursor:
         # List the currently scheduled sessions
-        cursor.execute("SELECT p.session_id, p.title, p.start_time, p.end_time, t.first_name, t.last_name FROM personal_sessions p JOIN trainers t ON p.trainer_id = t.trainer_id WHERE p.member_id = %s ORDER BY p.start_time;", (memberId,))
+        cursor.execute("SELECT p.session_id, p.title, p.start_time, p.end_time, t.first_name, t.last_name FROM personal_sessions p JOIN trainers t ON p.trainer_id = t.trainer_id WHERE p.member_id = %s;", (memberId,))
         sessions = cursor.fetchall()
         if sessions:
             print("\nScheduled Personal Training Sessions:")
@@ -425,7 +425,7 @@ def reschedulePersonalSession(conn, memberId):
             return
         
         # Get the id of the session to reschedule and check if it exists
-        sessionId = input("Enter the Id of the session you want to reschedule: ")
+        sessionId = input("Enter the id of the session you want to reschedule: ")
         cursor.execute("SELECT session_id, trainer_id, start_time, end_time FROM personal_sessions WHERE session_id = %s AND member_id = %s;", (sessionId, memberId))
         session = cursor.fetchone()
         if session is None:
@@ -434,13 +434,13 @@ def reschedulePersonalSession(conn, memberId):
         
         # Prompt for new date and time
         try:
-            date = input("Enter the new desired date for the session (yyyy-mm-dd or Hit Enter to keep the same date): ")
+            date = input("Enter the new desired date for the session (Use the form yyyy-mm-dd or Hit Enter to keep the same date): ")
             if not date:
                 date = session[2].strftime('%Y-%m-%d')
-            startTimeInp = input("Enter the new session start time (hh:mm or Hit Enter to keep the same time): ")
+            startTimeInp = input("Enter the new session start time (Use the form hh:mm or Hit Enter to keep the same time): ")
             if not startTimeInp:
                 startTimeInp = session[2].strftime('%H:%M')
-            endTimeInp = input("Enter the new session end time (hh:mm or Hit Enter to keep the same time): ")
+            endTimeInp = input("Enter the new session end time (Use the form hh:mm or Hit Enter to keep the same time): ")
             if not endTimeInp:
                 endTimeInp = session[3].strftime('%H:%M')
             
@@ -464,7 +464,7 @@ def reschedulePersonalSession(conn, memberId):
 def cancelPersonalSession(conn, memberId):
     with conn.cursor() as cursor:
         # List scheduled sessions
-        cursor.execute("SELECT p.session_id, p.title, p.start_time, p.end_time, t.first_name, t.last_name FROM personal_sessions p JOIN trainers t ON p.trainer_id = t.trainer_id WHERE p.member_id = %s ORDER BY p.start_time;", (memberId,))
+        cursor.execute("SELECT p.session_id, p.title, p.start_time, p.end_time, t.first_name, t.last_name FROM personal_sessions p JOIN trainers t ON p.trainer_id = t.trainer_id WHERE p.member_id = %s;", (memberId,))
         sessions = cursor.fetchall()
         if sessions:
             print("\nScheduled Personal Training Sessions:")
@@ -474,7 +474,7 @@ def cancelPersonalSession(conn, memberId):
             print("You have no sessions to cancel")
             return
         
-        sessionId = input("Enter the Id of the session you want to cancel: ")
+        sessionId = input("Enter the id of the session you want to cancel: ")
         
         # Check if session exists and if it does, cancel it
         try:
@@ -493,13 +493,13 @@ def cancelPersonalSession(conn, memberId):
 def registerGroupClass(conn, memberId):
     with conn.cursor() as cursor:
         # List all group fitness classes available
-        cursor.execute("SELECT g.class_id, g.title, g.start_time, g.end_time, t.first_name, t.last_name FROM group_classes g JOIN trainers t ON g.trainer_id = t.trainer_id ORDER BY g.start_time;")
+        cursor.execute("SELECT g.class_id, g.title, g.start_time, g.end_time, t.first_name, t.last_name FROM group_classes g JOIN trainers t ON g.trainer_id = t.trainer_id;")
         classes = cursor.fetchall()
         print("\nGroup Fitness Classes:")
         for groupClass in classes:
             print(f"Class Id: {groupClass[0]}, Title: {groupClass[1]}, Trainer: {groupClass[4]} {groupClass[5]}, Date: {groupClass[2].strftime('%Y-%m-%d')}, Start Time: {groupClass[2].strftime('%H:%M')}, End Time: {groupClass[3].strftime('%H:%M')}")
 
-        classId = input("Enter the Id of the class you want to register for: ")
+        classId = input("Enter the id of the class you want to register for: ")
         
         # Check if the member is already registered
         try:
@@ -531,7 +531,7 @@ def registerGroupClass(conn, memberId):
 def cancelGroupClass(conn, memberId):
     with conn.cursor() as cursor:
         # Get all class registrations for the member
-        cursor.execute("SELECT c.registration_id, g.title, g.start_time FROM class_registrations c JOIN group_classes g ON c.class_id = g.class_id WHERE c.member_id = %s;", (memberId,))
+        cursor.execute("SELECT c.registration_id, g.title, g.start_time, g.end_time FROM class_registrations c JOIN group_classes g ON c.class_id = g.class_id WHERE c.member_id = %s;", (memberId,))
         registrations = cursor.fetchall()
 
         if not registrations:
@@ -541,9 +541,9 @@ def cancelGroupClass(conn, memberId):
         # Show the fitness class registrations for the member to select which to cancel
         print("Your group fitness class registrations:")
         for registration in registrations:
-            print(f"Registration Id: {registration[0]}, Class: {registration[1]}, Start Date & Time: {registration[2]}")
+            print(f"Registration Id: {registration[0]}, Class: {registration[1]}, Date: {registration[2].strftime('%Y-%m-%d')}, Start Time: {registration[2].strftime('%H:%M')}, End Time: {registration[3].strftime('%H:%M')}")
 
-        registrationId = input("Enter the id of the registration ID you wish to cancel: ")
+        registrationId = input("Enter the id of the registration you wish to cancel: ")
 
         # Cancel the class by removing the registration
         try:
@@ -558,7 +558,7 @@ def cancelGroupClass(conn, memberId):
 # Function to add an exercise routine to the exercise_routines table        
 def addExerciseRoutine(conn, memberId):
     with conn.cursor() as cursor:
-        name = input("Enter the name of the exercise: ")
+        name = input("\nEnter the name of the exercise: ")
         amount = input("Enter the repetitions/time/distance: ")
         
         # Insert the routine into the table
@@ -579,7 +579,7 @@ def removeExerciseRoutine(conn, memberId):
             print("You have no exercise routines to remove")
             return
 
-        print("Exercise Routines:")
+        print("\nExercise Routines:")
         for routine in routines:
             print(f"Routine Id: {routine[0]}, Exercise: {routine[1]}, Repetitions/Time/Distance: {routine[2]}")
 

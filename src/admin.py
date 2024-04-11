@@ -99,7 +99,7 @@ def makeRoomBooking(conn):
             print(f"Room Id: {room[0]}, Room Name: {room[1]}, Max Capacity: {room[2]}")
         
         # Get the info for a room booking
-        roomId = input("Enter the Id of the room you wish to book: ")
+        roomId = input("Enter the id of the room you wish to book: ")
         try:
             dateInp = input("Enter the date for the booking (Use the form yyyy-mm-dd): ")
             date = datetime.strptime(dateInp, "%Y-%m-%d").date()
@@ -126,19 +126,19 @@ def makeRoomBooking(conn):
 def updateRoomBooking(conn):
     with conn.cursor() as cursor:
         # Get bookings for user to select which to update
-        cursor.execute("SELECT booking_id, room_id, date, start_time, end_time, purpose FROM room_bookings ORDER BY date, start_time;")
+        cursor.execute("SELECT booking_id, room_id, date, start_time, end_time, purpose FROM room_bookings;")
         bookings = cursor.fetchall()
         
         # Print room bookings if there are room bookings
         if bookings:
             print("\nRoom Bookings:")
             for booking in bookings:
-                print(f"Booking Id: {booking[0]}, Room Id: {booking[1]}, Date: {booking[2]}, Start Time: {booking[3]}, End Time: {booking[4]}, Purpose: {booking[5]}")
+                print(f"Booking Id: {booking[0]}, Room Id: {booking[1]}, Date: {booking[2]}, Start Time: {booking[3].strftime('%H:%M')}, End Time: {booking[4].strftime('%H:%M')}, Purpose: {booking[5]}")
         else:
             print("No room bookings to update")
             return
         
-        bookingId = input("Enter the Id of the booking you wish to update: ")
+        bookingId = input("Enter the id of the booking you wish to update: ")
         
         # Check to see if that booking exists
         cursor.execute("SELECT booking_id, room_id, date, start_time, end_time, purpose FROM room_bookings WHERE booking_id = %s;", (bookingId,))
@@ -151,18 +151,18 @@ def updateRoomBooking(conn):
         # Prompt for updated date and time
         try:
             dateInp = input("Enter the new date for the booking (Use the form yyyy-mm-dd or hit Enter to keep the same date): ")
-            if not date:
+            if not dateInp:
                 date = booking[2]
             else:
-                date = datetime.strptime(dateInp, "%Y-%m-%d").date()
+                date = datetime.strptime(dateInp, "%Y-%m-%d")
             startTimeInp = input("Enter the new booking start time (Use the form hh:mm or Hit Enter to keep the same time): ")
             if not startTimeInp:
-                startTime = booking[3]
+                startTime = booking[3].strftime('%H:%M')
             else:
                 startTime = datetime.strptime(startTimeInp, "%H:%M").time()
             endTimeInp = input("Enter the new booking end time (Use the form hh:mm or Hit Enter to keep the same time): ")
             if not endTimeInp:
-                endTime = booking[4]
+                endTime = booking[4].strftime('%H:%M')
             else:
                 endTime = datetime.strptime(endTimeInp, "%H:%M").time()
         except ValueError:
@@ -187,7 +187,7 @@ def updateRoomBooking(conn):
 def cancelRoomBooking(conn):
     with conn.cursor() as cursor:
         # Get all room bookings for user to select which to cancel
-        cursor.execute("SELECT booking_id, room_id, date, start_time, end_time, purpose FROM room_bookings ORDER BY date, start_time;")
+        cursor.execute("SELECT booking_id, room_id, date, start_time, end_time, purpose FROM room_bookings;")
         bookings = cursor.fetchall()
         
         if bookings:
@@ -218,7 +218,7 @@ def manageFitnessClasses(conn):
         print("2. Update an existing group fitness class")
         print("3. Cancel a group fitness class")
         print("4. Go back")
-        choice = input("Choose an option: ")
+        choice = input("Select an option: ")
 
         if choice == '1':
             scheduleFitnessClass(conn)
@@ -235,14 +235,14 @@ def manageFitnessClasses(conn):
 def scheduleFitnessClass(conn):
     with conn.cursor() as cursor:
         # Get the trainers for the club and display them for the user to select which to choose for the session
-        print("Trainers available to teach group fitness classes:")
+        print("\nTrainers available to teach group fitness classes:")
         cursor.execute("SELECT trainer_id, first_name, last_name FROM trainers;")
         for trainer in cursor.fetchall():
             print(f"Trainer Id: {trainer[0]}, Name: {trainer[1]} {trainer[2]}")
         
         # Get information for the class
         title = input("Enter a title for the class: ")
-        trainerId = input("Enter the Id of the trainer for the class: ")
+        trainerId = input("Enter the id of the trainer for the class: ")
         try:
             date = input("Enter the date for the class (Use the form yyyy-mm-dd): ")
             startTimeInp = input("Enter the class start time (Use the form hh:mm): ")
@@ -268,7 +268,7 @@ def scheduleFitnessClass(conn):
 def rescheduleFitnessClass(conn):
     with conn.cursor() as cursor:
         # Get the group fitness classes scheduled and print them for the user to select which to reschedule
-        cursor.execute("SELECT c.class_id, c.title, c.start_time, c.end_time, c.max_members, t.first_name, t.last_name FROM group_classes c JOIN trainers t ON c.trainer_id = t.trainer_id ORDER BY c.start_time;")
+        cursor.execute("SELECT c.class_id, c.title, c.start_time, c.end_time, c.max_members, t.first_name, t.last_name FROM group_classes c JOIN trainers t ON c.trainer_id = t.trainer_id;")
         classes = cursor.fetchall()
         if classes:
             print("\nGroup Fitness Classes:")
@@ -278,7 +278,7 @@ def rescheduleFitnessClass(conn):
             print("No group fitness classes to reschedule")
             return
         
-        classId = input("Enter the Id of the class you want to reschedule: ")
+        classId = input("Enter the id of the class you want to reschedule: ")
 
         # Check if the class exists
         try:
@@ -323,7 +323,7 @@ def rescheduleFitnessClass(conn):
 def cancelFitnessClass(conn):
     with conn.cursor() as cursor:
         # Get the currently scheduled group fitness classes and display them for the user to select which to cancel
-        cursor.execute("SELECT c.class_id, c.title, c.start_time, c.end_time, c.max_members, t.first_name, t.last_name FROM group_classes c JOIN trainers t ON c.trainer_id = t.trainer_id ORDER BY c.start_time;")
+        cursor.execute("SELECT c.class_id, c.title, c.start_time, c.end_time, c.max_members, t.first_name, t.last_name FROM group_classes c JOIN trainers t ON c.trainer_id = t.trainer_id;")
         classes = cursor.fetchall()
         if classes:
             print("\nGroup Fitness Classes:")
@@ -495,7 +495,7 @@ def processPayment(conn):
             return
 
         # Get all unpaid bills for the member
-        cursor.execute("SELECT bill_id, amount, billing_month, bill_created_date, fees FROM bills WHERE member_id = %s AND status = 'Unpaid' ORDER BY billing_month;", (memberId,))
+        cursor.execute("SELECT bill_id, amount, billing_month, bill_created_date, fees FROM bills WHERE member_id = %s AND status = 'Unpaid';", (memberId,))
         bills = cursor.fetchall()
 
         if not bills:
