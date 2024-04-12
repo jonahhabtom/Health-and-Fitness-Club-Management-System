@@ -4,7 +4,7 @@ This application acts as a management system for a health and fitness club. User
 
 ## Video
 
-Here is the link to the video demonstration for this application:
+Here is the link to the video demonstration for this application: https://youtu.be/Mc1ApSgrZSE 
 
 ## Running the Application
 

@@ -438,7 +438,7 @@ def generateBill(conn):
         except psycopg.Error as e:
             print(f"Error generating bill: {e}")
 
-        print(f"Bill generated successfully for Member with Id {memberId}. Total amount due is ${total}")
+        print(f"Bill generated successfully for member with id {memberId}. Total amount due is ${total}")
 
 # Function to view a bill      
 def viewBill(conn):
@@ -452,14 +452,14 @@ def viewBill(conn):
         for bill in bills:
             print(f"Bill Id: {bill[0]}, Member Name: {bill[2]} {bill[3]}, Billing Month: {str(bill[1])[:-3]}")
 
-        billId = input("Enter the Bill Id you wish to view in full: ")
+        billId = input("Enter the bill id you wish to view in full: ")
 
         # Get all the bill information
         try:
             cursor.execute("SELECT b.bill_id, m.first_name, m.last_name, b.amount, b.billing_month, b.bill_created_date, b.payment_due_date, b.status, b.fees FROM bills b JOIN members m ON b.member_id = m.member_id WHERE b.bill_id = %s;", (billId,))
             bill = cursor.fetchone()
         except psycopg.Error as e:
-            print("No bill exists with that Id")
+            print("No bill exists with that id")
             return
 
         # Display the bill
@@ -474,7 +474,7 @@ def viewBill(conn):
             print(f"Payment Due Date: {bill[6]}")
             print(f"Payment Status: {bill[7]}")
         else:
-            print("No bill found with that Id")
+            print("No bill found with that id")
 
 # Process a payment for a member 
 def processPayment(conn):
@@ -489,7 +489,7 @@ def processPayment(conn):
             print(f"Member Id: {member[0]}, Name: {member[1]} {member[2]}")
 
         # Get the member id who is making a payment
-        memberId = input("Enter the member Id who is making a payment: ")
+        memberId = input("Enter the member id who is making a payment: ")
         if memberId not in memberIds:
             print("Member with that id does not exist")
             return
@@ -511,13 +511,13 @@ def processPayment(conn):
             print(f"Fees: {bill[4]}")
             print(f"Amount: ${bill[1]:.2f}") 
 
-        billId = input("\nEnter the Bill Id to pay: ")
+        billId = input("\nEnter the bill id to pay: ")
 
         # Update the status of the bill to Paid to reflect the payment
         try:
             cursor.execute("UPDATE bills SET status = 'Paid' WHERE bill_id = %s AND member_id = %s;", (billId, memberId))
             if cursor.rowcount == 0:
-                print("Bill with that Id does not exist")
+                print("Bill with that id does not exist")
             else:
                 print("Bill successfully paid")
         except psycopg.Error as e:
